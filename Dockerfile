@@ -30,6 +30,7 @@ RUN apt-get update && apt-get install -y \
     xvfb \
     x11vnc \
     tigervnc-tools \
+    socat \
     supervisor \
     net-tools \
     procps \
@@ -52,16 +53,15 @@ ARG TARGETPLATFORM=linux/arm64
 # Set up working directory
 WORKDIR /app
 
-# Copy requirements and install Python dependencies
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir patchright # Or install it explicitly
 
 # Install Playwright and browsers with system dependencies
 ENV PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
-RUN playwright install --with-deps chromium
-RUN playwright install-deps
+RUN mkdir -p $PLAYWRIGHT_BROWSERS_PATH
 
-# Copy the application code
+RUN patchright install chromium
+RUN patchright install-deps chromium
+
 COPY . .
 
 # Set environment variables
@@ -80,6 +80,6 @@ ENV RESOLUTION_HEIGHT=1080
 RUN mkdir -p /var/log/supervisor
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
-EXPOSE 7788 6080 5901
+EXPOSE 9223 6080 5901
 
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
