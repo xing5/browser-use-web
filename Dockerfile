@@ -64,6 +64,11 @@ RUN patchright install-deps chromium
 
 COPY . .
 
+# Install project dependencies using uv
+RUN pip install --upgrade pip
+RUN pip install uv
+RUN uv sync --no-install-project
+
 # Set environment variables
 ENV PYTHONUNBUFFERED=1
 ENV BROWSER_USE_LOGGING_LEVEL=info
@@ -80,6 +85,6 @@ ENV RESOLUTION_HEIGHT=1080
 RUN mkdir -p /var/log/supervisor
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
-EXPOSE 9223 6080 5901
+EXPOSE 9223 6080 5901 8000
 
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]

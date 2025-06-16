@@ -1,0 +1,15 @@
+[project]
+name = "browser-use-web"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "browser-use==0.2.6",
+    "fastapi>=0.115.12",
+    "langchain-google-genai==2.1.5",
+    "langchain-ollama==0.3.3",
+    "langchain-openai==0.3.21",
+    "pyperclip",
+    "uvicorn>=0.34.3",
+]

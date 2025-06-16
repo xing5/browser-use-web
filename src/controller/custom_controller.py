@@ -23,7 +23,7 @@ class CustomController(Controller):
             pyperclip.copy(text)
             return ActionResult(extracted_content=text)
 
-        @self.registry.action("Paste text from clipboard", requires_browser=True)
+        @self.registry.action("Paste text from clipboard")
         async def paste_from_clipboard(browser: BrowserContext):
             text = pyperclip.paste()
             # send text to browser

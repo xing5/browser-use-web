@@ -188,3 +188,94 @@ playwright install
 
 - [x] **2025/01/10:** Thanks to @casistack. Now we have Docker Setup option and also Support keep browser open between tasks.[Video tutorial demo](https://github.com/browser-use/web-ui/issues/1#issuecomment-2582511750).
 - [x] **2025/01/06:** Thanks to @richard-devbot. A New and Well-Designed WebUI is released. [Video tutorial demo](https://github.com/warmshao/browser-use-webui/issues/1#issuecomment-2573393113).
+
+# Browser Control API
+
+This project exposes a minimal HTTP API to control a Chromium-based browser (via Chrome DevTools Protocol) running on `localhost:9222`.
+
+## Requirements
+
+- Python 3.10+
+- [Chromium/Chrome](https://www.chromium.org/getting-involved/download-chromium/) running with `--remote-debugging-port=9222`
+- [Poetry](https://python-poetry.org/) or `pip` for dependency management
+
+## Setup
+
+1. **Install Python dependencies:**
+
+```bash
+pip install fastapi uvicorn pydantic playwright
+# If using poetry:
+# poetry add fastapi uvicorn pydantic playwright
+```
+
+2. **Install Playwright browsers (if not already):**
+
+```bash
+python -m playwright install
+```
+
+3. **Start Chromium/Chrome with remote debugging:**
+
+```bash
+chromium --remote-debugging-port=9222
+# or
+google-chrome --remote-debugging-port=9222
+```
+
+4. **Run the API server:**
+
+```bash
+uvicorn browser_api:app --reload
+```
+
+The API will be available at [http://localhost:8000](http://localhost:8000)
+
+## API Endpoints
+
+### 1. Send Browser Action
+
+**POST** `/browser/action`
+
+Send a JSON action to control the browser. Example:
+
+```bash
+curl -X POST http://localhost:8000/browser/action \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "action": "go_to_url",
+    "params": {"url": "https://x.com"}
+  }'
+```
+
+- `action`: Name of the action (e.g., `go_to_url`, `click_element_by_index`, etc.)
+- `params`: Parameters for the action (see codebase for available actions)
+
+### 2. Get Browser Status
+
+**GET** `/browser/status`
+
+Returns a summary of the current browser state:
+
+```bash
+curl http://localhost:8000/browser/status
+```
+
+Example response:
+```json
+{
+  "num_tabs": 1,
+  "current_url": "https://example.com",
+  "tab_urls": ["https://example.com"]
+}
+```
+
+## Notes
+
+- The browser must be running and accessible at `localhost:9222` before starting the API.
+- See `src/controller/custom_controller.py` and `controller/service.py` for available action names and parameters.
+- The API uses FastAPI and provides interactive docs at [http://localhost:8000/docs](http://localhost:8000/docs)
+
+---
+
+**Minimal, no LLM agent required.**
