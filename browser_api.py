@@ -6,6 +6,7 @@ import asyncio
 import inspect
 import re
 import json
+import os
 
 from browser_use.browser import BrowserSession, BrowserProfile
 from src.controller.custom_controller import CustomController
@@ -13,6 +14,7 @@ from src.controller.custom_controller import CustomController
 # Singleton browser session (assume localhost:9222, Chromium CDP)
 browser_session = None
 controller = None
+highlight_elements = os.getenv("HIGHLIGHT_ELEMENTS", "true").lower() == "true"
 
 app = FastAPI()
 
@@ -30,7 +32,7 @@ async def startup_event():
         browser_profile=BrowserProfile(
             no_viewport=False,
             viewport={"width": 1920, "height": 990},
-            highlight_elements=True,
+            highlight_elements=highlight_elements,
         ),
     )
     controller = CustomController()
