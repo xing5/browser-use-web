@@ -105,7 +105,7 @@ async def _get_current_page():
         raise HTTPException(status_code=503, detail="Browser not connected.")
     # Wait for the page to load
     page = await browser_session.get_current_page()
-    await page.wait_for_load_state("domcontentloaded")
+    await page.wait_for_load_state("domcontentloaded", timeout=8000)
     await browser_session.get_state_summary(cache_clickable_elements_hashes=True)
     selector_map = await browser_session.get_selector_map()
     return get_selector_list(selector_map)
