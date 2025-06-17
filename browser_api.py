@@ -174,14 +174,13 @@ async def list_browser_actions():
 async def get_element_html(selector: str):
     if not browser_session:
         raise HTTPException(status_code=503, detail="Browser not connected.")
-    page = await browser_session.get_current_page()
-    locator = page.locator(selector).first
     try:
-        html = await locator.evaluate("el => el.outerHTML")
-    except Exception:
-        raise HTTPException(
-            status_code=404, detail=f"Element not found for selector: {selector}"
-        )
+        page = await browser_session.get_current_page()
+        locator = await page.locator(selector).all()
+        html = [await el.evaluate("el => el.outerHTML") for el in locator]
+    except Exception as e:
+        print(e)
+        return {"html": []}
     return {"html": html}
 
 
